@@ -1,0 +1,72 @@
+Experiment 3: Bubble Sort with Big-O Analysis
+Aim
+
+To sort an array using Bubble Sort and analyse its time complexity.
+
+Algorithm
+Compare each pair of adjacent elements in the array.
+If the left element is greater than the right one, swap them.
+After each pass, the largest remaining element moves to its correct position at the end.
+Repeat for n-1 passes.
+If a pass makes no swaps, the array is already sorted, so stop early.
+Pseudo code
+BubbleSort(A, n)
+  for i = 0 to n-2
+      swapped = 0
+      for j = 0 to n-i-2
+          if A[j] > A[j+1]
+              swap A[j], A[j+1]
+              swapped = 1
+      if swapped == 0
+          break
+Source code (C)
+c
+#include <stdio.h>
+
+int main() {
+    int a[] = {64, 34, 25, 12, 22, 11, 90};
+    int n = 7, i, j, temp, swapped;
+    int comparisons = 0, swaps = 0, passes = 0;
+
+    printf("Original array: ");
+    for (i = 0; i < n; i++)
+        printf("%d ", a[i]);
+    printf("\n");
+
+    for (i = 0; i < n - 1; i++) {
+        swapped = 0;
+        passes++;
+        for (j = 0; j < n - i - 1; j++) {
+            comparisons++;
+            if (a[j] > a[j + 1]) {
+                temp = a[j];
+                a[j] = a[j + 1];
+                a[j + 1] = temp;
+                swaps++;
+                swapped = 1;
+            }
+        }
+        if (swapped == 0)
+            break;
+    }
+
+    printf("Sorted array  : ");
+    for (i = 0; i < n; i++)
+        printf("%d ", a[i]);
+    printf("\n");
+
+    printf("Passes = %d, Comparisons = %d, Swaps = %d\n", passes, comparisons, swaps);
+
+    return 0;
+}
+Output
+Original array: 64 34 25 12 22 11 90 
+Sorted array  : 11 12 22 25 34 64 90 
+Passes = 6, Comparisons = 21, Swaps = 14
+Result
+
+The array was sorted successfully using Bubble Sort.
+
+Time complexity: Worst and average case O(n²); best case O(n) (already sorted array, thanks to the swapped flag).
+Space complexity: O(1), since sorting is done in place.
+Bubble Sort is stable.
