@@ -1,0 +1,130 @@
+
+# Q1: Sorting Algorithms
+
+def selection_sort(a):
+    comparisons = 0
+    swaps = 0
+    a = a.copy()
+
+    for i in range(len(a)):
+        minimum = i
+
+        for j in range(i + 1, len(a)):
+            comparisons += 1
+            if a[j] < a[minimum]:
+                minimum = j
+
+        if minimum != i:
+            a[i], a[minimum] = a[minimum], a[i]
+            swaps += 1
+
+    return a, comparisons, swaps
+
+
+def bubble_sort(a):
+    a = a.copy()
+    comparisons = 0
+    swaps = 0
+
+    for i in range(len(a)):
+        for j in range(0, len(a) - i - 1):
+            comparisons += 1
+
+            if a[j] > a[j + 1]:
+                a[j], a[j + 1] = a[j + 1], a[j]
+                swaps += 1
+
+    return a, comparisons, swaps
+
+
+def insertion_sort(a):
+    a = a.copy()
+    comparisons = 0
+    movements = 0
+
+    for i in range(1, len(a)):
+        key = a[i]
+        j = i - 1
+
+        while j >= 0:
+            comparisons += 1
+
+            if a[j] > key:
+                a[j + 1] = a[j]
+                movements += 1
+                j -= 1
+            else:
+                break
+
+        a[j + 1] = key
+
+    return a, comparisons, movements
+
+
+# Three test datasets
+datasets = {
+    "Random": [5, 2, 8, 1, 9],
+    "Reverse": [9, 7, 5, 3, 1],
+    "Already Sorted": [1, 2, 3, 4, 5]
+}
+
+for name, data in datasets.items():
+    print("\nDataset:", name)
+
+    for algorithm in [selection_sort, bubble_sort, insertion_sort]:
+        result, comparisons, movements = algorithm(data)
+
+        print(algorithm.__name__)
+        print("Sorted:", result)
+        print("Comparisons:", comparisons)
+        print("Swaps/Movements:", movements)
+
+
+================================================= OUTPUT ==========================================================
+Dataset: Random
+selection_sort
+Sorted: [1, 2, 5, 8, 9]
+Comparisons: 10
+Swaps/Movements: 3
+
+bubble_sort
+Sorted: [1, 2, 5, 8, 9]
+Comparisons: 10
+Swaps/Movements: 6
+
+insertion_sort
+Sorted: [1, 2, 5, 8, 9]
+Comparisons: 8
+Swaps/Movements: 5
+
+Dataset: Reverse
+selection_sort
+Sorted: [1, 3, 5, 7, 9]
+Comparisons: 10
+Swaps/Movements: 2
+
+bubble_sort
+Sorted: [1, 3, 5, 7, 9]
+Comparisons: 10
+Swaps/Movements: 10
+
+insertion_sort
+Sorted: [1, 3, 5, 7, 9]
+Comparisons: 10
+Swaps/Movements: 10
+
+Dataset: Already Sorted
+selection_sort
+Sorted: [1, 2, 3, 4, 5]
+Comparisons: 10
+Swaps/Movements: 0
+
+bubble_sort
+Sorted: [1, 2, 3, 4, 5]
+Comparisons: 10
+Swaps/Movements: 0
+
+insertion_sort
+Sorted: [1, 2, 3, 4, 5]
+Comparisons: 4
+Swaps/Movements: 0
