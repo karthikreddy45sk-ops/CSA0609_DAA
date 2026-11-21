@@ -1,0 +1,130 @@
+
+import time
+
+# 1. Linear Search (Iterative)
+def linear_search(records, target):
+    comparisons = 0
+
+    for i, value in enumerate(records):
+        comparisons += 1
+
+        if value == target:
+            return i, comparisons
+
+    return -1, comparisons
+
+
+# 2. Recursive Binary Search
+def recursive_binary_search(records, target, low, high, counter):
+
+    if low > high:
+        return -1
+
+    mid = (low + high) // 2
+    counter[0] += 1
+
+    if records[mid] == target:
+        return mid
+
+    elif target < records[mid]:
+        return recursive_binary_search(
+            records, target, low, mid - 1, counter
+        )
+
+    else:
+        return recursive_binary_search(
+            records, target, mid + 1, high, counter
+        )
+
+
+# 3. Hash Table Search
+def hash_search(hash_table, target):
+    return hash_table.get(target, -1)
+
+
+# Main Program
+sizes = [1000, 10000, 100000, 1000000]
+
+print("STUDENT RECORD SEARCHING SYSTEM")
+print("=" * 75)
+
+print(f"{'Records':<12}{'Linear':<12}{'Binary':<12}"
+      f"{'Hash':<12}{'Linear(ms)':<14}{'Binary(ms)':<14}")
+
+for n in sizes:
+
+    # Generate student registration numbers
+    records = list(range(1000001, 1000001 + n))
+
+    # Search for the last registration number
+    target = records[-1]
+
+    # Linear Search
+    start = time.perf_counter()
+    li, lc = linear_search(records, target)
+    linear_time = (time.perf_counter() - start) * 1000
+
+    # Recursive Binary Search
+    counter = [0]
+
+    start = time.perf_counter()
+    bi = recursive_binary_search(
+        records, target, 0, n - 1, counter
+    )
+    binary_time = (time.perf_counter() - start) * 1000
+
+    # Hash Table Creation
+    start = time.perf_counter()
+    hash_table = {v: i for i, v in enumerate(records)}
+    build_time = (time.perf_counter() - start) * 1000
+
+    # Hash Search
+    start = time.perf_counter()
+    hi = hash_search(hash_table, target)
+    hash_time = (time.perf_counter() - start) * 1000
+
+    # Display Results
+    print(f"{n:<12}{lc:<12}{counter[0]:<12}"
+          f"{1:<12}{linear_time:<14.4f}{binary_time:<14.4f}")
+
+    # Validate results
+    assert li == bi == hi
+
+    print("Hash table creation time:", round(build_time, 4), "ms")
+    print("Hash search time:", round(hash_time, 4), "ms")
+    print("Search Result: Student Found")
+    print("-" * 75)
+
+print("All three algorithms executed successfully.")
+
+================================================= OUTPUT ==============================================================
+STUDENT RECORD SEARCHING SYSTEM
+===========================================================================
+
+Records     Linear      Binary      Hash        Linear(ms)   Binary(ms)
+
+1000        1000        10          1           0.0477       0.0068
+Hash table creation time: 0.0551 ms
+Hash search time: 0.001 ms
+Search Result: Student Found
+---------------------------------------------------------------------------
+
+10000       10000       14          1           0.6724       0.0329
+Hash table creation time: 0.7858 ms
+Hash search time: 0.0015 ms
+Search Result: Student Found
+---------------------------------------------------------------------------
+
+100000      100000      17          1           6.4033       0.0108
+Hash table creation time: 58.189 ms
+Hash search time: 0.0016 ms
+Search Result: Student Found
+---------------------------------------------------------------------------
+
+1000000     1000000     20          1           68.2122      0.0291
+Hash table creation time: 141.9318 ms
+Hash search time: 0.0043 ms
+Search Result: Student Found
+---------------------------------------------------------------------------
+
+All three algorithms executed successfully.
