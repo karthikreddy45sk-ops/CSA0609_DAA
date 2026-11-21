@@ -1,130 +1,383 @@
 
 import time
+import random
 
-# 1. Linear Search (Iterative)
-def linear_search(records, target):
+# =====================================================
+# DAA ASSIGNMENT 1 - CO1
+# STUDENT RECORD SEARCH SYSTEM
+# =====================================================
+
+# =====================================================
+# TASK 1 - THREE SEARCH ALGORITHMS
+# =====================================================
+
+# 1. ITERATIVE SEQUENTIAL SEARCH
+def sequential_search(records, target):
     comparisons = 0
 
-    for i, value in enumerate(records):
+    for i in range(len(records)):
         comparisons += 1
 
-        if value == target:
+        if records[i] == target:
             return i, comparisons
 
     return -1, comparisons
 
 
-# 2. Recursive Binary Search
-def recursive_binary_search(records, target, low, high, counter):
-
+# 2. RECURSIVE BINARY SEARCH
+def binary_search(records, target, low, high):
     if low > high:
-        return -1
+        return -1, 0
 
     mid = (low + high) // 2
-    counter[0] += 1
+    comparisons = 1
 
     if records[mid] == target:
-        return mid
+        return mid, comparisons
 
-    elif target < records[mid]:
-        return recursive_binary_search(
-            records, target, low, mid - 1, counter
+    if target < records[mid]:
+        position, count = binary_search(
+            records, target, low, mid - 1
         )
-
     else:
-        return recursive_binary_search(
-            records, target, mid + 1, high, counter
+        position, count = binary_search(
+            records, target, mid + 1, high
         )
 
-
-# 3. Hash Table Search
-def hash_search(hash_table, target):
-    return hash_table.get(target, -1)
+    return position, comparisons + count
 
 
-# Main Program
+# 3. HASH TABLE SEARCH
+def hash_table_search(student_table, target):
+    # One dictionary lookup operation
+    result = student_table.get(target, None)
+
+    if result is not None:
+        return result, 1
+
+    return -1, 1
+
+
+# =====================================================
+# TASK 2 - BASIC OPERATION
+# =====================================================
+
+print("\n========== TASK 2: BASIC OPERATIONS ==========")
+
+print("Sequential Search : Registration number comparison")
+print("Binary Search     : Middle element comparison")
+print("Hash Table Search : Dictionary key lookup")
+
+
+# =====================================================
+# TASK 3 - MATHEMATICAL COMPLEXITY
+# =====================================================
+
+print("\n========== TASK 3: TIME COMPLEXITY ==========")
+
+print("Sequential Search : O(n)")
+print("Binary Search     : O(log n)")
+print("Hash Table Search : Average O(1)")
+print("Hash Table Build  : O(n) average")
+print("Binary Sort Cost  : O(n log n)")
+
+
+# =====================================================
+# TASK 4 - BEST, AVERAGE AND WORST CASE
+# =====================================================
+
+print("\n========== TASK 4: CASE ANALYSIS ==========")
+
+print("\nSequential Search:")
+print("Best Case    : O(1) - First record")
+print("Average Case : O(n) - Middle record approximately")
+print("Worst Case   : O(n) - Last record or not found")
+
+print("\nBinary Search:")
+print("Best Case    : O(1) - Middle record")
+print("Average Case : O(log n)")
+print("Worst Case   : O(log n)")
+
+print("\nHash Table Search:")
+print("Best Case    : O(1) average")
+print("Average Case : O(1) average")
+print("Worst Case   : O(n) with severe hash collisions")
+
+
+# =====================================================
+# TASK 5 - ASYMPTOTIC ANALYSIS
+# =====================================================
+
+print("\n========== TASK 5: ASYMPTOTIC ANALYSIS ==========")
+
+print("Sequential Search : O(n), Omega(1)")
+print("Binary Search     : O(log n), Theta(log n)")
+print("Hash Table Search : Average Theta(1)")
+
+
+# =====================================================
+# TASK 6 AND 7 - RECURRENCE RELATION AND SOLUTION
+# =====================================================
+
+print("\n========== TASK 6 AND 7: RECURRENCE ==========")
+
+print("Binary Search recurrence:")
+print("T(n) = T(n/2) + 1")
+print("T(1) = 1")
+
+print("\nBy repeated substitution:")
+print("T(n) = T(n/4) + 2")
+print("T(n) = T(n/8) + 3")
+print("T(n) = T(n/2^k) + k")
+
+print("When n / 2^k = 1:")
+print("k = log2(n)")
+
+print("Final Complexity: O(log n)")
+
+
+# =====================================================
+# TASK 8 - IMPLEMENTATION AND TESTING
+# TASK 9 - EXPERIMENTAL PERFORMANCE
+# =====================================================
+
+print("\n========== TASK 8 AND 9: EXPERIMENTS ==========")
+
 sizes = [1000, 10000, 100000, 1000000]
-
-print("STUDENT RECORD SEARCHING SYSTEM")
-print("=" * 75)
-
-print(f"{'Records':<12}{'Linear':<12}{'Binary':<12}"
-      f"{'Hash':<12}{'Linear(ms)':<14}{'Binary(ms)':<14}")
 
 for n in sizes:
 
-    # Generate student registration numbers
-    records = list(range(1000001, 1000001 + n))
+    print("\n----------------------------------")
+    print("Number of Student Records:", n)
+
+    # Generate registration numbers
+    records = list(range(1, n + 1))
 
     # Search for the last registration number
-    target = records[-1]
+    target = n
 
-    # Linear Search
-    start = time.perf_counter()
-    li, lc = linear_search(records, target)
-    linear_time = (time.perf_counter() - start) * 1000
-
-    # Recursive Binary Search
-    counter = [0]
+    # ---------------------------------
+    # Sequential Search
+    # ---------------------------------
 
     start = time.perf_counter()
-    bi = recursive_binary_search(
-        records, target, 0, n - 1, counter
+
+    position, comparisons = sequential_search(
+        records, target
     )
-    binary_time = (time.perf_counter() - start) * 1000
 
-    # Hash Table Creation
+    sequential_time = time.perf_counter() - start
+
+    print("\nSequential Search:")
+    print("Position:", position)
+    print("Comparisons:", comparisons)
+    print("Execution Time:",
+          round(sequential_time, 6), "seconds")
+
+    # ---------------------------------
+    # Binary Search
+    # ---------------------------------
+
+    # Preprocessing: sorting the records
     start = time.perf_counter()
-    hash_table = {v: i for i, v in enumerate(records)}
-    build_time = (time.perf_counter() - start) * 1000
 
-    # Hash Search
+    sorted_records = sorted(records)
+
+    sorting_time = time.perf_counter() - start
+
     start = time.perf_counter()
-    hi = hash_search(hash_table, target)
-    hash_time = (time.perf_counter() - start) * 1000
 
-    # Display Results
-    print(f"{n:<12}{lc:<12}{counter[0]:<12}"
-          f"{1:<12}{linear_time:<14.4f}{binary_time:<14.4f}")
+    position, comparisons = binary_search(
+        sorted_records,
+        target,
+        0,
+        len(sorted_records) - 1
+    )
 
-    # Validate results
-    assert li == bi == hi
+    binary_time = time.perf_counter() - start
 
-    print("Hash table creation time:", round(build_time, 4), "ms")
-    print("Hash search time:", round(hash_time, 4), "ms")
-    print("Search Result: Student Found")
-    print("-" * 75)
+    print("\nRecursive Binary Search:")
+    print("Position:", position)
+    print("Comparisons:", comparisons)
+    print("Sorting Time:", round(sorting_time, 6), "seconds")
+    print("Search Time:", round(binary_time, 6), "seconds")
 
-print("All three algorithms executed successfully.")
+    # ---------------------------------
+    # Hash Table Search
+    # ---------------------------------
 
-================================================= OUTPUT ==============================================================
-STUDENT RECORD SEARCHING SYSTEM
-===========================================================================
+    # Preprocessing: building the hash table
+    start = time.perf_counter()
 
-Records     Linear      Binary      Hash        Linear(ms)   Binary(ms)
+    student_table = {
+        registration_number: registration_number
+        for registration_number in records
+    }
 
-1000        1000        10          1           0.0477       0.0068
-Hash table creation time: 0.0551 ms
-Hash search time: 0.001 ms
-Search Result: Student Found
----------------------------------------------------------------------------
+    hash_build_time = time.perf_counter() - start
 
-10000       10000       14          1           0.6724       0.0329
-Hash table creation time: 0.7858 ms
-Hash search time: 0.0015 ms
-Search Result: Student Found
----------------------------------------------------------------------------
+    start = time.perf_counter()
 
-100000      100000      17          1           6.4033       0.0108
-Hash table creation time: 58.189 ms
-Hash search time: 0.0016 ms
-Search Result: Student Found
----------------------------------------------------------------------------
+    position, operations = hash_table_search(
+        student_table, target
+    )
 
-1000000     1000000     20          1           68.2122      0.0291
-Hash table creation time: 141.9318 ms
-Hash search time: 0.0043 ms
-Search Result: Student Found
----------------------------------------------------------------------------
+    hash_time = time.perf_counter() - start
 
-All three algorithms executed successfully.
+    print("\nHash Table Search:")
+    print("Position:", position)
+    print("Lookup Operations:", operations)
+    print("Hash Table Build Time:",
+          round(hash_build_time, 6), "seconds")
+    print("Search Time:", round(hash_time, 6), "seconds")
+
+
+# =====================================================
+# TASK 10 - THEORY VS EXPERIMENT
+# =====================================================
+
+print("\n========== TASK 10: THEORY VS EXPERIMENT ==========")
+
+print("Sequential Search increases linearly with n.")
+print("Binary Search requires fewer comparisons as n grows.")
+print("Hash Table Search uses an average constant-time lookup.")
+print("Actual execution time also depends on hardware and preprocessing.")
+
+
+# =====================================================
+# TASK 11 - FINAL DESIGN RECOMMENDATION
+# =====================================================
+
+print("\n========== TASK 11: FINAL RECOMMENDATION ==========")
+
+print("Recommended Approach: Hash Table Search")
+print("Reason:")
+print("1. Fast average lookup.")
+print("2. Suitable for large student databases.")
+print("3. Registration numbers are unique.")
+print("4. New records can be inserted into the table.")
+print("5. Avoids sorting the entire database for every search.")
+
+
+# =====================================================
+# TASK 12 - CHANGED REQUIREMENT
+# 50,000 SEARCHES PER HOUR
+# 1,000,000 STUDENT RECORDS
+# DAILY UPDATES
+# =====================================================
+
+print("\n========== TASK 12: DAY-4 DESIGN CHALLENGE ==========")
+
+number_of_records = 1000000
+searches_per_hour = 50000
+
+print("Student Records:", number_of_records)
+print("Search Requests Per Hour:", searches_per_hour)
+print("Record Updates: Once per day")
+
+print("\nDesign Decision: RETAIN HASH TABLE")
+
+print("Impact Analysis:")
+print("Large number of searches requires fast lookup.")
+print("Daily updates make hash table maintenance practical.")
+
+print("\nAdaptation:")
+print("Build the hash table when records are loaded.")
+print("Insert new student records when they are added.")
+print("Use registration number as the dictionary key.")
+
+print("\nComplexity:")
+print("Hash Table Construction: O(n) average")
+print("Average Search: O(1)")
+print("Average Insertion: O(1)")
+
+print("\nFinal Conclusion:")
+print("Hash Table Search is recommended for the changed requirement.")
+print("It provides fast average lookup for frequent search requests.")
+
+print("\n========== ASSIGNMENT 1 COMPLETED ==========")
+
+
+====================================================== output ========================================================
+========== TASK 2: BASIC OPERATIONS ==========
+
+Sequential Search : Registration number comparison
+Binary Search     : Middle element comparison
+Hash Table Search : Dictionary key lookup
+
+========== TASK 3: TIME COMPLEXITY ==========
+
+Sequential Search : O(n)
+Binary Search     : O(log n)
+Hash Table Search : Average O(1)
+
+========== TASK 6 AND 7: RECURRENCE ==========
+
+Binary Search recurrence:
+T(n) = T(n/2) + 1
+T(1) = 1
+
+Final Complexity: O(log n)
+
+========== TASK 8 AND 9: EXPERIMENTS ==========
+
+Number of Student Records: 1000
+
+Sequential Search:
+Position: 999
+Comparisons: 1000
+
+Recursive Binary Search:
+Position: 999
+Comparisons: 10
+
+Hash Table Search:
+Position: 1000
+Lookup Operations: 1
+
+Number of Student Records: 10000
+
+Sequential Search:
+Comparisons: 10000
+
+Recursive Binary Search:
+Comparisons: 14
+
+Hash Table Search:
+Lookup Operations: 1
+
+Number of Student Records: 100000
+
+Sequential Search:
+Comparisons: 100000
+
+Recursive Binary Search:
+Comparisons: 17
+
+Hash Table Search:
+Lookup Operations: 1
+
+Number of Student Records: 1000000
+
+Sequential Search:
+Comparisons: 1000000
+
+Recursive Binary Search:
+Comparisons: 20
+
+Hash Table Search:
+Lookup Operations: 1
+
+========== TASK 11: FINAL RECOMMENDATION ==========
+
+Recommended Approach: Hash Table Search
+
+========== TASK 12: DAY-4 DESIGN CHALLENGE ==========
+
+Student Records: 1000000
+Search Requests Per Hour: 50000
+Record Updates: Once per day
+
+Design Decision: RETAIN HASH TABLE
+
+========== ASSIGNMENT 1 COMPLETED ==========
